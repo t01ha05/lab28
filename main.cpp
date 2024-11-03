@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <list>
 #include "Goat.h"
+#include <random>
+#include <string>
 using namespace std;
 
 const int SZ_NAMES = 200, SZ_COLORS = 25;
@@ -12,13 +14,13 @@ void delete_goat(list<Goat> &trip);
 void add_goat(list<Goat> &trip, string [], string []);
 void display_trip(list<Goat> trip);
 int main_menu();
-void find_goat_by_name(list<Goat> goats);
-void count_goats_by_color(list<Goat> goats);
-void display_goats_reversed(list<Goat>& goats);
-void shuffle_goats(list<Goat> goats);
-void remove_specific_goat();
-void replace_goat_color();
-void sort_goats_by_age(list<Goat> goats);
+void find_goat_by_name(const list<Goat>& goats);
+void count_goats_by_color(const list<Goat>& goats);
+void display_goats_reversed(list<Goat> goats);
+void shuffle_goats(list<Goat>& goats);
+void remove_specific_goat(list<Goat>& goats);
+void replace_goat_color(list<Goat>& goats);
+void sort_goats_by_age(list<Goat>& goats);
 void calculate_average_age();
 
 int main() {
@@ -151,7 +153,7 @@ int select_goat(list<Goat> trp) {
     return input;
 }
 
-void find_goat_by_name(list<Goat> goats) {
+void find_goat_by_name(const list<Goat>& goats) {
     string name;
     cout << "Enter name to find: ";
     cin >> name;
@@ -161,7 +163,7 @@ void find_goat_by_name(list<Goat> goats) {
     }
 }
 
-void count_goats_by_color(list<Goat> goats) {
+void count_goats_by_color(const list<Goat>& goats) {
     string color;
     cout << "Enter color to count: ";
     cin >> color;
@@ -173,15 +175,40 @@ void count_goats_by_color(list<Goat> goats) {
     cout << "Found " << count << " goats" << endl;
 }
 
-void display_goats_reversed(list<Goat>& goats) {
+void display_goats_reversed(list<Goat> goats) {
     for (int i = goats.size() - 1; i >= 0; i--)
         cout << goats[i] << endl;
 }
 
-void shuffle_goats(list<Goat> goats) {
-    random_shuffle(goats.begin(), goats.end());
+void shuffle_goats(list<Goat>& goats) {
+    vector<Goat> temp(goats.begin(), goats.end());
+    shuffle(temp.begin(), temp.end(), default_random_engine());
+    goats = list<Goat>(temp.begin(), temp.end());
 }
 
-void sort_goats_by_age(list<Goat> goats) {
+void sort_goats_by_age(list<Goat>& goats) {
+    sort(goats.begin(), goats.end());
+}
+
+void remove_specific_goat(list<Goat>& goats) {
+    string name;
+    cout << "Enter name of goat to remove: ";
+    cin >> name;
+    goats.remove_if([&name](const Goat& g) { return g.get_name() == name; });
+}
+
+void replace_goat_color(list<Goat>& goats) {
+    string oldColor, newColor;
+    cout << "Enter current color: ";
+    cin >> oldColor;
+    cout << "Enter new color: ";
+    cin >> newColor;
+    for (Goat& goat : goats) {
+        if (goat.get_color() == oldColor) 
+            goat.set_color(newColor);
+    }
+}
+
+void sort_goats_by_age(list<Goat>& goats) {
     sort(goats.begin(), goats.end());
 }
