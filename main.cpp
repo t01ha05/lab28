@@ -77,6 +77,26 @@ int main() {
                 cout << "Counting goats by color.\n";
                 count_goats_by_color(trip);
                 break;
+            case 6:
+                cout << "Displaying goats in reverse.\n";
+                display_goats_reversed(trip);
+                break;
+            case 7:
+                cout << "Shuffling goats.\n";
+                shuffle_goats(trip);
+                break;
+            case 8:
+                cout << "Removing specific goat.\n";
+                remove_specific_goat(trip);
+                break;
+            case 9:
+                cout << "Replacing goat color.\n";
+                replace_goat_color(trip);
+                break;
+            case 10:
+                cout << "Sorting goats by age.\n";
+                sort_goats_by_age(trip);
+                break;
             default:
                 cout << "Invalid selection.\n";
                 break;
@@ -189,7 +209,11 @@ void shuffle_goats(list<Goat>& goats) {
 }
 
 void sort_goats_by_age(list<Goat>& goats) {
-    sort(goats.begin(), goats.end());
+    goats.sort([](const Goat& a, const Goat& b) {
+        return a.get_age() < b.get_age();
+    });
+    cout << "Goats sorted by age." << endl;
+    display_trip(goats);
 }
 
 void remove_specific_goat(list<Goat>& goats) {
@@ -206,13 +230,9 @@ void replace_goat_color(list<Goat>& goats) {
     cout << "Enter new color: ";
     cin >> newColor;
     for (Goat& goat : goats) {
-        if (goat.get_color() == oldColor) 
+        if (goat.get_color() == oldColor)
             goat.set_color(newColor);
     }
-}
-
-void sort_goats_by_age(list<Goat>& goats) {
-    sort(goats.begin(), goats.end());
 }
 
 void calculate_average_age(const list<Goat>& goats) {
