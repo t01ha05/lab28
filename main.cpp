@@ -5,6 +5,7 @@
 #include "Goat.h"
 #include <random>
 #include <string>
+#include <numeric>
 using namespace std;
 
 const int SZ_NAMES = 200, SZ_COLORS = 25;
@@ -12,16 +13,16 @@ const int SZ_NAMES = 200, SZ_COLORS = 25;
 int select_goat(list<Goat> trip);
 void delete_goat(list<Goat> &trip);
 void add_goat(list<Goat> &trip, string [], string []);
-void display_trip(list<Goat> trip);
+void display_trip(const list<Goat>& trip);
 int main_menu();
-void find_goat_by_name(const list<Goat>& goats);
-void count_goats_by_color(const list<Goat>& goats);
+void find_goat_by_name(list<Goat> goats);
+void count_goats_by_color(list<Goat> goats);
 void display_goats_reversed(list<Goat> goats);
 void shuffle_goats(list<Goat>& goats);
 void remove_specific_goat(list<Goat>& goats);
 void replace_goat_color(list<Goat>& goats);
 void sort_goats_by_age(list<Goat>& goats);
-void calculate_average_age();
+void calculate_average_age(const list<Goat>& goats);
 
 int main() {
     srand(time(0));
@@ -130,14 +131,12 @@ void add_goat(list<Goat> &trip, string nms[], string cls[]) {
     cout << "Goat added. New trip size: " << trip.size() << endl;
 }
 
-void display_trip(list<Goat> trp) {
+void display_trip(const list<Goat>& trip) {
     int i = 1;
-    for (auto gt: trp)
-        cout << "\t" 
-             << "[" << i++ << "] "
-             << gt.get_name() 
-             << " (" << gt.get_age() 
-             << ", " << gt.get_color() << ")\n";
+    for (const Goat& goat : trip) {
+        cout << i++ << ": " << goat.get_name() << " " 
+             << goat.get_age() << " " << goat.get_color() << endl;
+    }
 }
 
 int select_goat(list<Goat> trp) {
@@ -153,31 +152,34 @@ int select_goat(list<Goat> trp) {
     return input;
 }
 
-void find_goat_by_name(const list<Goat>& goats) {
+void find_goat_by_name(list<Goat> goats) {
     string name;
     cout << "Enter name to find: ";
     cin >> name;
+    bool found = false;
     for (Goat g : goats) {
-        if (g.get_name() == name)
+        if (g.get_name() == name) {
+            found = true;
             cout << "Found: " << g.get_name() << endl;
+        }
     }
+    if (!found)
+        cout << "Not found" << endl;
 }
 
-void count_goats_by_color(const list<Goat>& goats) {
+void count_goats_by_color(list<Goat> goats) {
     string color;
-    cout << "Enter color to count: ";
-    cin >> color;
-    int count = 0;
-    for (Goat g : goats) {
+    cin >> "Enter color to count: ";
+    int count;
+    for (Goat g : goats)
         if (g.get_color() == color)
             count++;
-    }
     cout << "Found " << count << " goats" << endl;
 }
 
 void display_goats_reversed(list<Goat> goats) {
-    for (int i = goats.size() - 1; i >= 0; i--)
-        cout << goats[i] << endl;
+    goats.reverse();
+    display_trip(goats);
 }
 
 void shuffle_goats(list<Goat>& goats) {
@@ -211,4 +213,15 @@ void replace_goat_color(list<Goat>& goats) {
 
 void sort_goats_by_age(list<Goat>& goats) {
     sort(goats.begin(), goats.end());
+}
+
+void calculate_average_age(const list<Goat>& goats) {
+    if (goats.empty()) {
+        cout << "No goats to calculate average age." << endl;
+        return;
+    }
+    int totalAge = accumulate(goats.begin(), goats.end(), 0,
+        [](int sum, const Goat& g) { return sum + g.get_age(); });
+    double averageAge = static_cast<double>(totalAge) / goats.size();
+    cout << "Average age of goats: " << averageAge << endl;
 }
